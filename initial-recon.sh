@@ -23,7 +23,7 @@ echo "[+] Checking for targets input"
 was_set=false
 if [ -z "$targets" ]; then
     if [ $# -eq 0 ]; then
-        echo "Usage: ./startup.sh <targets> OR set \$targets variable"
+        echo "Usage: ./initial-recon.sh <targets> OR set \$targets variable"
         exit 1
     fi
     targets=$1
@@ -213,16 +213,12 @@ run_commands_for_serv() {
         pids+=($!)
         nmap -n -sV -Pn -p"$port" --script=http-shellshock-spider -oN "$targetdir/${ip}_http_shellshock_${port}.nmap" "$ip" &
         pids+=($!)
-        nikto -h "$ip" -p "$port" | tee "$targetdir/${ip}_nikto_${port}" &
-        pids+=($!)
         whatweb --color=never --no-errors "http://$ip:$port" | tee "$targetdir/${ip}_whatweb_${port}" &
         pids+=($!)
-        # Run wpscan anyway, as in original script
         wpscan --url "http://$ip:$port" -e ap,vt,cb,u | tee "$targetdir/${ip}_wpscan_${port}" &
         pids+=($!)
         wpscan --url "http://$ip:$port" -P /usr/share/wordlists/rockyou.txt -U admin | tee "$targetdir/${ip}_wpscan_brute_${port}" &
         pids+=($!)
-        # Use feroxbuster instead of gobuster for directory enumeration
         feroxbuster --url "http://$ip:$port" -w /usr/share/wordlists/dirb/common.txt --extract-links --scan-limit 1 | tee "$targetdir/${ip}_ferox_common_${port}" &
         pids+=($!)
         feroxbuster --url "http://$ip:$port" -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt --extract-links --scan-limit 1 | tee "$targetdir/${ip}_ferox_medium_${port}" &
@@ -234,13 +230,11 @@ run_commands_for_serv() {
         pids+=($!)
         nmap -n -sV -Pn -p"$port" --script=http-shellshock-spider -oN "$targetdir/${ip}_http_shellshock_${port}.nmap" "$ip" &
         pids+=($!)
-        nikto -h "$ip" -p "$port" | tee "$targetdir/${ip}_nikto_https_${port}.txt" &
-        pids+=($!)
         whatweb --color=never --no-errors "https://$ip:$port" | tee "$targetdir/${ip}_whatweb_https_${port}" &
         pids+=($!)
         wpscan --url "https://$ip:$port" -e ap,vt,cb,u | tee "$targetdir/${ip}_wpscan_https_${port}" &
         pids+=($!)
-        wpscan --url "https://$ip:$port" -P /usr/share/wordlists/rockyou.txt -U admin | tee "$targetdir/${ip}_wpscan_https_brute_${port}" &
+        wpscan --url "https://$ip:$port" -P /usr/share/wordlists/rockyou.txt -U admin | tee "$targetdir/${ip}_wpscan_brute_${port}" &
         pids+=($!)
         feroxbuster --url "https://$ip:$port" --insecure -w /usr/share/wordlists/dirb/common.txt --extract-links --scan-limit 1 | tee "$targetdir/${ip}_ferox_https_common_${port}" &
         pids+=($!)
@@ -297,8 +291,6 @@ run_commands_for_serv() {
         snmpwalk -c public -v1 "$ip" 1.3.6.1.2.1.25.4.2.1.2 | tee "$targetdir/${ip}_snmp_process" &
         pids+=($!)
         snmpwalk -c public -v1 "$ip" 1.3.6.1.2.1.25.6.3.1.2 | tee "$targetdir/${ip}_snmp_software" &
-        pids+=($!)
-        snmpwalk -c public -v1 "$ip" NET-SNMP-EXTEND-MIB::nsExtendOutputFull | tee "$targetdir/${ip}_snmp_software" &
         pids+=($!)
     elif [[ "$serv" == *"ssh"* ]]; then
         medusa -u root -P /usr/share/wordlists/rockyou.txt -e ns -h "$ip" -p "$port" -M ssh -f &
