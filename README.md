@@ -1,13 +1,13 @@
 # Network Reconnaissance Script
 
 ## Description
-This Bash script automates network reconnaissance for penetration testing or security assessments. It performs ping sweeps, port scanning, service version detection, vulnerability scanning, and service-specific enumeration on a target network (CIDR or IP range). Key features include:
+This Bash script (`initial-recon.sh`) automates network reconnaissance for penetration testing or security assessments. It performs ping sweeps, port scanning, service version detection, vulnerability scanning, and service-specific enumeration on a target network (CIDR or IP range). Key features include:
 - **Ping sweep** to identify live hosts using `fping`.
 - **Port scanning** with `nmap` (fast TCP, UDP, full TCP).
 - **Version scanning** with `nmap`, outputting to both text and XML, followed by `searchsploit` for exploit matching.
 - **Vulnerability scanning** using `nmap` scripts.
 - **Active Directory enumeration** with `enum4linux-ng`, including RID brute-forcing (500-1000 range).
-- **Service-specific enumeration** for protocols like FTP, HTTP, HTTPS, SMB, LDAP, SNMP, SSH, and more.
+- **Service-specific enumeration** for protocols like FTP, HTTP, HTTPS, SMB, LDAP, SNMP, SSH, and more, using tools like `whatweb`, `wpscan`, and `feroxbuster` for web services.
 
 The script organizes output into directories per IP under an `ad_set` folder, storing results in text files (e.g., `nmap_version.txt`, `enum4.txt`, `searchsploit.txt`).
 
@@ -19,7 +19,6 @@ Ensure the following tools are installed on a Linux system (e.g., Kali Linux):
 - **searchsploit**: For exploit matching (`sudo apt install exploitdb`).
 - **hydra**: For brute-forcing FTP and SSH (`sudo apt install hydra`).
 - **medusa**: For brute-forcing HTTP, SSH, and Telnet (`sudo apt install medusa`).
-- **nikto**: For web server scanning (`sudo apt install nikto`).
 - **whatweb**: For web technology fingerprinting (`sudo apt install whatweb`).
 - **wpscan**: For WordPress enumeration (`sudo apt install wpscan`).
 - **feroxbuster**: For web directory enumeration (`sudo apt install feroxbuster`).
@@ -38,8 +37,8 @@ Additionally:
 ## Installation
 1. Clone the repository:
    ```bash
-   https://github.com/3R3BUS/OSCP-Initial-Recon.git
-   cd OSCP-Initial-Recon
+   git clone https://github.com/<your-username>/<your-repo>.git
+   cd <your-repo>
    ```
 2. Make the script executable:
    ```bash
@@ -48,7 +47,7 @@ Additionally:
 3. Install dependencies (on Kali Linux):
    ```bash
    sudo apt update
-   sudo apt install fping nmap enum4linux-ng exploitdb hydra medusa nikto whatweb wpscan feroxbuster smbclient smbmap ldap-utils ncrack smtp-user-enum snmp seclists
+   sudo apt install fping nmap enum4linux-ng exploitdb hydra medusa whatweb wpscan feroxbuster smbclient smbmap ldap-utils ncrack smtp-user-enum snmp seclists
    ```
 
 ## Usage
@@ -86,7 +85,7 @@ Results are stored in the `ad_set` directory, with subdirectories for each live 
 - `searchsploit.txt`: Exploit matches from `searchsploit --nmap`.
 - `nmap_vuln.txt`: Vulnerability scan results.
 - `enum4.txt`: Active Directory enumeration results with RID brute-forcing.
-- Service-specific files (e.g., `<IP>_ftp_21.nmap`, `<IP>_http_80.nmap`, `<IP>_nikto_80`, `<IP>_smbclient`).
+- Service-specific files (e.g., `<IP>_ftp_21.nmap`, `<IP>_http_80.nmap`, `<IP>_whatweb_80`, `<IP>_wpscan_80`, `<IP>_smbclient`).
 
 Temporary files (`temp_ports.txt`) are cleaned up after execution. No `urls.txt` or `open_ports.txt` files are created.
 
@@ -132,7 +131,7 @@ Temporary files (`temp_ports.txt`) are cleaned up after execution. No `urls.txt`
 - If issues persist, run with `bash -x ./initial-recon.sh` for debug output and share the results.
 
 ## License
-Open-Source!
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contributing
 Submit issues or pull requests to the repository for improvements or bug fixes.
