@@ -131,7 +131,7 @@ Temporary files (`temp_ports.txt`) are cleaned up after execution. No `urls.txt`
 - If issues persist, run with `bash -x ./initial-recon.sh` for debug output and share the results.
 
 ## License
-MIT License. See [LICENSE](LICENSE) for details.
+Open-Source.
 
 ## Contributing
 Submit issues or pull requests to the repository for improvements or bug fixes.
